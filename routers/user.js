@@ -52,155 +52,167 @@ const loginSubmit = async (req, res) => {
     const Email = req.body.email;
     const Password = req.body.password;
     const userData = await User.findOne({ email: Email })
-    if (userData === null) {
-        res.render("userlogin.ejs", { value: "your account dose not axist", email: Email, password: Password })
-    } else {
+    if (userData.email === "admin123@gmail.com") {
         if (userData.password === Password) {
-            if (userData.role !== 0) {
+            const Id = userData._id
+            var token = jwt.sign({ Id }, 'shhhhh');
+            res.cookie('token', token)
+            res.clearCookie("otp");
+            res.redirect("/users")
+        }
+    } else {
+        if (userData === null) {
 
-                // const Id = userData._id;
-                // var token = jwt.sign({ Id }, 'shhhhh');
-                //  req.session.token = token
-                res.cookie('otp', "hello")
-                res.cookie('user', Email)
-                const randomNumber = ((Math.random() * 40)) * 90
-                const int = parseInt(randomNumber)
-                const stringOtp = JSON.stringify(int)
-
-                await User.findByIdAndUpdate(userData._id, { otp: int })
-                // storeOtp=int;
-                // storeId=userData._id;
-                console.log("this is login opt =>", int)
-                const transport = nodemailer.createTransport({
-                    host: "smtp.gmail.com",
-                    port: 587,
-                    secure: false,
-                    requireTLS: true,
-                    auth: {
-                        user: 'bablusaini@cloveritservices.com',
-                        pass: "Bablu@123"
-                    }
-
-                });
-                const mailerOption = {
-                    from: 'bablusaini@cloveritservices.com',
-                    to: 'bablusaini@cloveritservices.com',
-                    subject: "login otp",
-                    text: stringOtp
-                }
-                transport.sendMail(mailerOption, function (error, info) {
-
-                })
-                res.redirect("/otp")
-            } else {
-                res.render("userlogin.ejs", { value: "you have not authrization", email: Email, password: Password })
-            }
-
+            res.render("userlogin.ejs", { value: "your account dose not axist", email: Email, password: Password })
         } else {
-            res.render("userlogin.ejs", { value: "your password is incorrect", email: Email, password: Password })
+            if (userData.password === Password) {
+                if (userData.role !== 0) {
+
+                    // const Id = userData._id;
+                    // var token = jwt.sign({ Id }, 'shhhhh');
+                    //  req.session.token = token
+                    res.cookie('otp', "hello")
+                    res.cookie('user', Email)
+                    const randomNumber = ((Math.random() * 40)) * 90
+                    const int = parseInt(randomNumber)
+                    const stringOtp = JSON.stringify(int)
+
+                    await User.findByIdAndUpdate(userData._id, { otp: int })
+                    // storeOtp=int;
+                    // storeId=userData._id;
+                    console.log("this is login opt =>", int)
+                    const transport = nodemailer.createTransport({
+                        host: "smtp.gmail.com",
+                        port: 587,
+                        secure: false,
+                        requireTLS: true,
+                        auth: {
+                            user: 'bablusaini@cloveritservices.com',
+                            pass: "Bablu@123"
+                        }
+
+                    });
+                    const mailerOption = {
+                        from: 'bablusaini@cloveritservices.com',
+                        to: 'bablusaini@cloveritservices.com',
+                        subject: "login otp",
+                        text: stringOtp
+                    }
+                    transport.sendMail(mailerOption, function (error, info) {
+
+                    })
+                    res.redirect("/otp")
+                } else {
+                    res.render("userlogin.ejs", { value: "you have not authrization", email: Email, password: Password })
+                }
+
+            } else {
+                res.render("userlogin.ejs", { value: "your password is incorrect", email: Email, password: Password })
+            }
         }
     }
+
 }
 
 const otp2 = async (req, res) => {
-    res.render("otp2.ejs", { otp: "", value: "" ,resend:""})
+    res.render("otp2.ejs", { otp: "", value: "", resend: "" })
 
 }
 const otp = async (req, res) => {
-    res.render("otp.ejs", { otp: "", value: "" ,resend:""})
+    res.render("otp.ejs", { otp: "", value: "", resend: "" })
 
 }
 const otpSubmit = async (req, res) => {
-   
+
     const otp = parseInt(req.body.otp)
-   
+
     try {
         const DataOtp = await User.findOne({ otp: otp })
-       if(DataOtp !==null){
-        const Id = DataOtp._id;
-        var token = jwt.sign({ Id }, 'shhhhh');
-        res.cookie('token',token)
-        res.clearCookie("otp");
-        res.redirect("/users")
-       }else{
-        res.render("otp.ejs", { otp: "incorrect otp", value: otp, resend:""})
-       }
-   } 
-   catch (error) {
-        res.render("otp.ejs", { otp: "incorrect otp", value: otp ,resend:""})
+        if (DataOtp !== null) {
+            const Id = DataOtp._id;
+            var token = jwt.sign({ Id }, 'shhhhh');
+            res.cookie('token', token)
+            res.clearCookie("otp");
+            res.render("home.ejs")
+        } else {
+            res.render("otp.ejs", { otp: "incorrect otp", value: otp, resend: "" })
+        }
     }
-   
-    
+    catch (error) {
+        res.render("otp.ejs", { otp: "incorrect otp", value: otp, resend: "" })
+    }
+
+
 
 }
 const resend = async (req, res) => {
-   const email= req.cookies.user
-   
-   const user =await User.findOne({email:email})
-  
-   const randomNumber = ((Math.random() * 40)) * 90
-                const int = parseInt(randomNumber)
-                const stringOtp = JSON.stringify(int)
-                await User.findByIdAndUpdate(user._id, { otp: int })
-               
-                console.log("this is login resend opt =>", int)
-                const transport = nodemailer.createTransport({
-                    host: "smtp.gmail.com",
-                    port: 587,
-                    secure: false,
-                    requireTLS: true,
-                    auth: {
-                        user: 'bablusaini@cloveritservices.com',
-                        pass: "Bablu@123"
-                    }
+    const email = req.cookies.user
 
-                });
-                const mailerOption = {
-                    from: 'bablusaini@cloveritservices.com',
-                    to: 'bablusaini@cloveritservices.com',
-                    subject: "login resend otp",
-                    text: stringOtp
-                }
-                transport.sendMail(mailerOption, function (error, info) {
-              })
-                res.render("otp.ejs",{ otp: "", value:"" ,resend:"resent otp"})
-                // res.redirect("/otp")
-  
+    const user = await User.findOne({ email: email })
+
+    const randomNumber = ((Math.random() * 40)) * 90
+    const int = parseInt(randomNumber)
+    const stringOtp = JSON.stringify(int)
+    await User.findByIdAndUpdate(user._id, { otp: int })
+
+    console.log("this is login resend opt =>", int)
+    const transport = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        auth: {
+            user: 'bablusaini@cloveritservices.com',
+            pass: "Bablu@123"
+        }
+
+    });
+    const mailerOption = {
+        from: 'bablusaini@cloveritservices.com',
+        to: 'bablusaini@cloveritservices.com',
+        subject: "login resend otp",
+        text: stringOtp
+    }
+    transport.sendMail(mailerOption, function (error, info) {
+    })
+    res.render("otp.ejs", { otp: "", value: "", resend: "resent otp" })
+    // res.redirect("/otp")
+
 }
 
 const signupResend = async (req, res) => {
-    const email= req.cookies.user
-    const otpUser =await otpTable.findOne({email:email})
+    const email = req.cookies.user
+    const otpUser = await otpTable.findOne({ email: email })
     const randomNumber = ((Math.random() * 40)) * 90
-                 const int = parseInt(randomNumber)
-                 const stringOtp = JSON.stringify(int)
- 
-                await otpTable.findByIdAndUpdate(otpUser._id, { otp: int })
-                
-                 console.log("this is signup resend opt =>", int)
-                 const transport = nodemailer.createTransport({
-                     host: "smtp.gmail.com",
-                     port: 587,
-                     secure: false,
-                     requireTLS: true,
-                     auth: {
-                         user: 'bablusaini@cloveritservices.com',
-                         pass: "Bablu@123"
-                     }
- 
-                 });
-                 const mailerOption = {
-                     from: 'bablusaini@cloveritservices.com',
-                     to: 'bablusaini@cloveritservices.com',
-                     subject: "signup resend otp",
-                     text: stringOtp
-                 }
-                 transport.sendMail(mailerOption, function (error, info) {
-               })
-                 res.render("otp2.ejs",{ otp: "", value:"" ,resend:"resent otp"})
-                 // res.redirect("/otp")
-   
- }
+    const int = parseInt(randomNumber)
+    const stringOtp = JSON.stringify(int)
+
+    await otpTable.findByIdAndUpdate(otpUser._id, { otp: int })
+
+    console.log("this is signup resend opt =>", int)
+    const transport = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        requireTLS: true,
+        auth: {
+            user: 'bablusaini@cloveritservices.com',
+            pass: "Bablu@123"
+        }
+
+    });
+    const mailerOption = {
+        from: 'bablusaini@cloveritservices.com',
+        to: 'bablusaini@cloveritservices.com',
+        subject: "signup resend otp",
+        text: stringOtp
+    }
+    transport.sendMail(mailerOption, function (error, info) {
+    })
+    res.render("otp2.ejs", { otp: "", value: "", resend: "resent otp" })
+    // res.redirect("/otp")
+
+}
 
 const logout2 = async (req, res) => {
     res.clearCookie('token');
@@ -214,16 +226,16 @@ const signupSubmit = async (req, res) => {
 
     let role = 1;
     let status = 1;
-  //  const bcryptPassword = bcrypt.hashSync(password, 10)
+    //  const bcryptPassword = bcrypt.hashSync(password, 10)
     res.cookie('otp', "hello")
     res.cookie('user', email)
     const randomNumber = ((Math.random() * 40)) * 90
     const int = parseInt(randomNumber)
-    const otpData = new otpTable({ name: name, email: email, password: password, role: "1", status: "1", mobile: mobile ,otp:int})
-   
+    const otpData = new otpTable({ name: name, email: email, password: password, role: "1", status: "1", mobile: mobile, otp: int })
+
     await otpData.save()
     const stringOtp = JSON.stringify(int)
-    
+
     console.log("this is signup opt =>", int)
     const transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
@@ -252,22 +264,22 @@ const signupSubmit = async (req, res) => {
 }
 
 const otp2Submit = async (req, res) => {
-   const otp=req.body.otp
-   const getOtp = await otpTable.findOne({otp:req.body.otp})
-  
-    
-    if (getOtp !==null) {
-        if(req.cookies.user===getOtp.email){
-        const userData = new User({ name: getOtp.name, email: getOtp.email, password: getOtp.password, role: "1", status: "1", mobile: getOtp.mobile })
-        await userData.save()
+    const otp = req.body.otp
+    const getOtp = await otpTable.findOne({ otp: req.body.otp })
 
-        res.redirect("/")
-        }else{
+
+    if (getOtp !== null) {
+        if (req.cookies.user === getOtp.email) {
+            const userData = new User({ name: getOtp.name, email: getOtp.email, password: getOtp.password, role: "1", status: "1", mobile: getOtp.mobile })
+            await userData.save()
+
+            res.redirect("/")
+        } else {
 
         }
-       
+
     } else {
-        res.render("otp2.ejs", { otp: "incorrect otp", value: otp ,resend:""})
+        res.render("otp2.ejs", { otp: "incorrect otp", value: otp, resend: "" })
     }
 
 }
@@ -276,7 +288,7 @@ const userHome = async (req, res) => {
     const limitData = await User.find().limit(5)
     const userallData = await User.find()
     const length = userallData.length
-   
+
 
     const devideLength = length / 5;
     const int = parseInt(devideLength)
@@ -303,7 +315,7 @@ const update = async (req, res) => {
 
 const updateuser = async (req, res) => {
     const Id = req.params.id
-   
+
     let role = 1;
     let status = 1;
     let { name, email, password, mobile } = req.body;
@@ -320,7 +332,7 @@ const deleteuser = async (req, res) => {
 }
 
 const index = async (req, res) => {
-   
+
     res.render("home.ejs")
 
 }
@@ -398,7 +410,7 @@ tourRouter
 
 tourRouter
     .route("/index")
-    .get(index)
+    .get(check, index)
 
 tourRouter
     .route("/count/:id")
