@@ -233,11 +233,13 @@ overviewRouter
     .route("/userDetails")
     .get(userDetails)
     .post(upload.single('img'), userDetailsSubmit)
-
+//
 // overviewRouter
 //     .route("/gallery")
 //     .get(gallery) 
 //     .post(upload.single('img'), gallerySubmit)
+
+
 
 
 overviewRouter
