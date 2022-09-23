@@ -1,0 +1,37 @@
+<header class="bg-dark text-light p-3 d-flex" style="justify-content: space-between;">
+   <div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <span>
+                <h3><a href="/overview" style="text-decoration: none;color:#fff">All Tours</a></h3>
+            </span>
+        </div>
+
+            <% if(name !==""){ %>
+            <div class="col-md-4">
+                <h2 class="text-center">Wellcome to <%=name%></h2>
+            </div>
+            <div class="col-md-4">
+                <span style="align-items: center;display: flex;">
+                <a href="/booking" class="btn btn-primary" style="margin-left: auto;z-index: 100;"> Your Booking</a>
+                <a href="/tourLogout" class="btn btn-primary ms-2 me-2">logout</a>
+                <a href="/userDetails"> <i class="bi bi-person-circle" style="font-size:26px;z-index: 100;" onclick="abc()"></i></a>
+                 </span>
+            </div>
+               <% }else{ %>  
+                <div class="col-md-4">
+                    <h2 class="text-center">Wellcome</h2>
+                </div>
+                <div class="col-md-4">
+                <span style="float: right;">
+
+                    <a href="/tourLogin" class="btn btn-primary me-2">Login</a>
+                    <a href="/tourSignup" class="btn btn-primary">Signup</a>
+            </span>
+        </div>
+               <% } %>
+        </div>
+    </div>
+   
+   
+</header>

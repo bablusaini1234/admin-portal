@@ -1,0 +1,65 @@
+###
+GET http://localhost:5000/api
+
+###
+
+POST http://localhost:5000/api
+Content-Type: application/json
+
+{
+ "name":"tttt",
+ "price":111,
+ "rating":111
+}
+
+###
+
+GET http://localhost:5000/api/1546
+
+
+###
+
+PUT http://localhost:5000/api/2
+Content-Type: application/json
+
+{
+ "name":"www"
+}
+
+###
+
+
+
+# TOUR section is being starting
+
+
+
+GET http://localhost:5000/tour/
+
+###
+GET http://localhost:5000/tour/6305cd83469d5ea7f37efc6e
+
+###
+POST  http://localhost:5000/tour
+Content-Type: application/json
+
+{
+    "name":"bablu saini 3",
+    "price":644,
+    "rating":644
+}
+
+###
+PUT  http://localhost:5000/tour/6305cd83469d5ea7f37efc6e
+Content-Type: application/json
+
+{
+    "name":"bablu",
+    "price":744,
+    "rating":744
+}
+
+###
+DELETE   http://localhost:5000/tour/6305cd83469d5ea7f37efc6e
+
+
