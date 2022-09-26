@@ -2,8 +2,8 @@ const express = require("express")
 const userRouter = require("express").Router()
 const fs = require("fs")
 userRouter.use(express.json())
-const readFile = fs.readFileSync("../express/data/userData.json", "utf8")
-const jsonData = JSON.parse(readFile);
+// const readFile = fs.readFileSync("../express/data/userData.json", "utf8")
+// const jsonData = JSON.parse(readFile);
 userRouter.use(express.static('public')); 
 // const catchError= require("../errors/catchError")
 // var sess;
