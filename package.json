@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "dev": "nodemon app.js",
-   "pro": "npx cross-env NODE_ENV=production PORT=5000 nodemon app.js ",
+    "pro": "npx cross-env NODE_ENV=production PORT=5000 nodemon app.js ",
     "debug": "ndb app.js"
   },
   "keywords": [],
@@ -34,5 +34,8 @@
     "path": "^0.12.7",
     "slugify": "^1.6.5",
     "xss-clean": "^0.1.1"
+  },
+  "engines": {
+    "node":"12.11.1"
   }
 }
