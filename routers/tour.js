@@ -16,7 +16,7 @@ const createTour = async (req, res) => {
     const tourname= req.body.tourName
     const price= req.body.price
     const location= req.body.location
-    console.log(req.body)
+   // console.log(req.body)
     try {
         const newTour = new Tour({tourName:tourname,price:price,location:location})
         await newTour.save()

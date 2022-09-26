@@ -155,7 +155,7 @@ const resend = async (req, res) => {
     const stringOtp = JSON.stringify(int)
     await User.findByIdAndUpdate(user._id, { otp: int })
 
-    console.log("this is login resend opt =>", int)
+   // console.log("this is login resend opt =>", int)
     const transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -189,7 +189,7 @@ const signupResend = async (req, res) => {
 
     await otpTable.findByIdAndUpdate(otpUser._id, { otp: int })
 
-    console.log("this is signup resend opt =>", int)
+    //console.log("this is signup resend opt =>", int)
     const transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -236,7 +236,7 @@ const signupSubmit = async (req, res) => {
     await otpData.save()
     const stringOtp = JSON.stringify(int)
 
-    console.log("this is signup opt =>", int)
+   // console.log("this is signup opt =>", int)
     const transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
