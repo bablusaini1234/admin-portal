@@ -96,10 +96,10 @@ app.all('*', (req, res, next) => {
 
 // app.use(errorRouter2)
 
-app.listen(5000, (req, res) => {
-    // console.log(`process.env = ${process.env.Node_ENV}`)
-    // console.log(`server is running on port ${process.env.PORT}`)
-    console.log("server is running on port 5000")
+app.listen(process.env.PORT, (req, res) => {
+    console.log(`process.env = ${process.env.Node_ENV}`)
+    console.log(`server is running on port ${process.env.PORT}`)
+    console.log(`server is running on port 5000`)
 
 })
 
