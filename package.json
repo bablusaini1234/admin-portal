@@ -1,9 +1,7 @@
 {
   "name": "express",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
-  
   "scripts": {
     "start": "node app.js",
     "start2": "nodemon app.js",
@@ -35,5 +33,14 @@
     "path": "^0.12.7",
     "slugify": "^1.6.5",
     "xss-clean": "^0.1.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bablusaini1234/tour.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bablusaini1234/tour/issues"
+  },
+  "homepage": "https://github.com/bablusaini1234/tour#readme",
+  "description": ""
 }
