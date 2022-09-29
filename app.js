@@ -16,6 +16,7 @@ const session = require("express-session");
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const rateLimit = require('express-rate-limit')
+const flash = require("connect-flash");
 //  const helmet = require("helmet");
  const mongoSanitization= require("express-mongo-sanitize")
 const xss= require("xss-clean")
@@ -24,7 +25,7 @@ const limiter = rateLimit({
 	windowMs: 60 * 60 * 1000,
     message:"to many request from  this IP, please try again in an hours" 
 })
-
+app.use(flash())
 app.use('/api', limiter)
 
 //  app.use(helmet());
@@ -34,7 +35,7 @@ const dotenv = require("dotenv").config()
 const mongoose= require("mongoose")
 
 
-mongoose.connect("mongodb://127.0.0.1:27017/tour",()=>{
+mongoose.connect(process.env.DATABASE,()=>{
     console.log("tour database is connect")
     
 })

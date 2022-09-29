@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer")
 const otpTable = require("../model/otpTable")
+const httpMsgs= require("http-msgs")
+
 let storeData;
 let storeId;
 let storeOtp;
@@ -19,7 +21,7 @@ const check = (req, res, next) => {
     }
 }
 const checkOtp = (req, res, next) => {
-
+                                
     if (req.cookies.otp === "hello") {
         next()
     } else {
@@ -37,9 +39,10 @@ const Homecheck = (req, res, next) => {
 
 // USER SECTION //
 const login = async (req, res) => {
+    const error = req.flash('user')
     res.clearCookie("otp");
     res.clearCookie("user");
-    res.render("userlogin.ejs", { value: "", email: '', password: '' })
+    res.render("userlogin.ejs", { value: "", error: error })
 }
 
 const signup = async (req, res) => {
@@ -49,68 +52,82 @@ const signup = async (req, res) => {
 
 }
 const loginSubmit = async (req, res) => {
+    console.log(req.body)
     const Email = req.body.email;
     const Password = req.body.password;
     const userData = await User.findOne({ email: Email })
-    if (userData.email === "admin123@gmail.com") {
-        if (userData.password === Password) {
-            const Id = userData._id
-            var token = jwt.sign({ Id }, 'shhhhh');
-            res.cookie('token', token)
-            res.clearCookie("otp");
-            res.redirect("/users")
-        }
+    // if (userData.email === "admin123@gmail.com") {
+    //     if (userData.password === Password) {
+    //         const Id = userData._id
+    //         var token = jwt.sign({ Id }, 'shhhhh');
+    //         res.cookie('token', token)
+    //         res.clearCookie("otp");
+    //         res.redirect("/users")
+    //     }
+    // } else {
+        
+    if (userData === null) {
+      
+      httpMsgs.send500(req,res, "your account dose not exist")
+        
     } else {
-        if (userData === null) {
+        if (userData.password === Password) {
+            if (userData.role !== 0) {
 
-            res.render("userlogin.ejs", { value: "your account dose not axist", email: Email, password: Password })
-        } else {
-            if (userData.password === Password) {
-                if (userData.role !== 0) {
 
-                    // const Id = userData._id;
-                    // var token = jwt.sign({ Id }, 'shhhhh');
-                    //  req.session.token = token
-                    res.cookie('otp', "hello")
-                    res.cookie('user', Email)
-                    const randomNumber = ((Math.random() * 40)) * 90
-                    const int = parseInt(randomNumber)
-                    const stringOtp = JSON.stringify(int)
+                // const Id = userData._id;
+                // var token = jwt.sign({ Id }, 'shhhhh');
+                //  req.session.token = token
+                res.cookie('otp', "hello")
+                res.cookie('user', Email)
+                const randomNumber = ((Math.random() * 40)) * 90
+                const int = parseInt(randomNumber)
+                const stringOtp = JSON.stringify(int)
 
-                    await User.findByIdAndUpdate(userData._id, { otp: int })
-                    // storeOtp=int;
-                    // storeId=userData._id;
-                    console.log("this is login opt =>", int)
-                    const transport = nodemailer.createTransport({
-                        host: "smtp.gmail.com",
-                        port: 587,
-                        secure: false,
-                        requireTLS: true,
-                        auth: {
-                            user: 'bablusaini@cloveritservices.com',
-                            pass: "Bablu@123"
-                        }
-
-                    });
-                    const mailerOption = {
-                        from: 'bablusaini@cloveritservices.com',
-                        to: 'bablusaini@cloveritservices.com',
-                        subject: "login otp",
-                        text: stringOtp
+                await User.findByIdAndUpdate(userData._id, { otp: int })
+                // storeOtp=int;
+                // storeId=userData._id;
+                console.log("this is login opt =>", int)
+                const transport = nodemailer.createTransport({
+                    host: "smtp.gmail.com",
+                    port: 587,
+                    secure: false,
+                    requireTLS: true,
+                    auth: {
+                        user: 'bablusaini@cloveritservices.com',
+                        pass: "Bablu@123"
                     }
-                    transport.sendMail(mailerOption, function (error, info) {
 
-                    })
-                    res.redirect("/otp")
-                } else {
-                    res.render("userlogin.ejs", { value: "you have not authrization", email: Email, password: Password })
+                });
+                const mailerOption = {
+                    from: 'bablusaini@cloveritservices.com',
+                    to: 'bablusaini@cloveritservices.com',
+                    subject: "login otp",
+                    text: stringOtp
                 }
+                transport.sendMail(mailerOption, function (error, info) {
 
+                })
+                res.redirect("/otp")
             } else {
-                res.render("userlogin.ejs", { value: "your password is incorrect", email: Email, password: Password })
+                httpMsgs.send500(req,res, "you are not authrization")
+               
+                //  res.status(500).json({ message: "you are not authrization" })
+                // res.render("userlogin.ejs", { value: "you have not authrization", email: Email, password: Password })
             }
+
+        } else {
+        
+            httpMsgs.send500(req,res, "your password is correct")
+          // req.flash('user', "your password is incorect")
+         
+           
+         // console.log("your password is incorect")
+            //  res.render("userlogin.ejs")
+            //  res.render("userlogin.ejs", { value: "your password is incorrect", email: Email, password: Password })
         }
     }
+    // }
 
 }
 
@@ -118,10 +135,10 @@ const otp2 = async (req, res) => {
     res.render("otp2.ejs", { otp: "", value: "", resend: "" })
 
 }
-const otp = async (req, res) => {
-    res.render("otp.ejs", { otp: "", value: "", resend: "" })
+// const otp = async (req, res) => {
+//     res.render("otp.ejs", { otp: "", value: "", resend: "" })
 
-}
+// }
 const otpSubmit = async (req, res) => {
 
     const otp = parseInt(req.body.otp)
@@ -133,13 +150,14 @@ const otpSubmit = async (req, res) => {
             var token = jwt.sign({ Id }, 'shhhhh');
             res.cookie('token', token)
             res.clearCookie("otp");
-            res.render("home.ejs")
+           res.redirect("users")
         } else {
-            res.render("otp.ejs", { otp: "incorrect otp", value: otp, resend: "" })
+            httpMsgs.send500(req,res, "Invalid Otp")
+           // res.render("otp.ejs", { otp: "incorrect otp", value: otp, resend: "" })
         }
     }
     catch (error) {
-        res.render("otp.ejs", { otp: "incorrect otp", value: otp, resend: "" })
+        
     }
 
 
@@ -155,7 +173,7 @@ const resend = async (req, res) => {
     const stringOtp = JSON.stringify(int)
     await User.findByIdAndUpdate(user._id, { otp: int })
 
-   // console.log("this is login resend opt =>", int)
+    // console.log("this is login resend opt =>", int)
     const transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -236,7 +254,7 @@ const signupSubmit = async (req, res) => {
     await otpData.save()
     const stringOtp = JSON.stringify(int)
 
-   // console.log("this is signup opt =>", int)
+    // console.log("this is signup opt =>", int)
     const transport = nodemailer.createTransport({
         host: "smtp.gmail.com",
         port: 587,
@@ -385,7 +403,7 @@ tourRouter
 
 tourRouter
     .route("/otp")
-    .get(checkOtp, otp)
+    // .get(checkOtp, otp)
     .post(otpSubmit)
 
 tourRouter

@@ -4,7 +4,7 @@ body {
     height: 100vh;
 }
 
-form {
+#form {
     width: 35%;
     background: rgba(255, 255, 255, 0.4);
     box-sizing: border-box;
@@ -16,7 +16,17 @@ form {
     animation-duration: 1s;
 
 }
+#form2 {
+    width: 35%;
+    background: rgba(255, 255, 255, 0.4);
+    box-sizing: border-box;
+    padding: 30px 0px 30px 30px;
+    position: relative;
+    top: 15%;
+    left: 35%;
+    
 
+}
 @keyframes move {
     from {
         margin-top: -50px;
