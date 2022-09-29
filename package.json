@@ -38,13 +38,9 @@
     "slugify": "^1.6.5",
     "xss-clean": "^0.1.1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bablusaini1234/admin-portal"
-  },
-  "bugs": {
-    "url": "https://github.com/bablusaini1234/admin-portal/issues"
-  },
-  "homepage": "https://github.com/bablusaini1234/admin-portal#readme",
-  "description": ""
+   "engines": {
+    "node": "0.10.41",
+    "npm": "1.4.29"
+  }
+  
 }
