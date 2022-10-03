@@ -97,7 +97,7 @@ app.all('*', (req, res, next) => {
 
 // app.use(errorRouter2)
 
-app.listen(process.env.PORT, (req, res) => {
+app.listen(process.env.PORT || 5000, (req, res) => {
  
 
 })
