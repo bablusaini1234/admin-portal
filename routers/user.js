@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken');
 const nodemailer = require("nodemailer")
 const otpTable = require("../model/otpTable")
-const httpMsgs= require("http-msgs")
+const httpMsgs = require("http-msgs")
 
 let storeData;
 let storeId;
@@ -21,7 +21,7 @@ const check = (req, res, next) => {
     }
 }
 const checkOtp = (req, res, next) => {
-                                
+
     if (req.cookies.otp === "hello") {
         next()
     } else {
@@ -56,37 +56,25 @@ const loginSubmit = async (req, res) => {
     const Email = req.body.email;
     const Password = req.body.password;
     const userData = await User.findOne({ email: Email })
-    // if (userData.email === "admin123@gmail.com") {
-    //     if (userData.password === Password) {
-    //         const Id = userData._id
-    //         var token = jwt.sign({ Id }, 'shhhhh');
-    //         res.cookie('token', token)
-    //         res.clearCookie("otp");
-    //         res.redirect("/users")
-    //     }
-    // } else {
-        
+
+
+
     if (userData === null) {
-      
-      httpMsgs.send500(req,res, "your account dose not exist")
-        
+
+        httpMsgs.send500(req, res, "your account dose not exist")
+
     } else {
         if (userData.password === Password) {
             if (userData.role !== 0) {
-
-
-                // const Id = userData._id;
-                // var token = jwt.sign({ Id }, 'shhhhh');
-                //  req.session.token = token
+              if(req.body.otp == ''){
+               
                 res.cookie('otp', "hello")
                 res.cookie('user', Email)
                 const randomNumber = ((Math.random() * 40)) * 90
                 const int = parseInt(randomNumber)
                 const stringOtp = JSON.stringify(int)
-
                 await User.findByIdAndUpdate(userData._id, { otp: int })
-                // storeOtp=int;
-                // storeId=userData._id;
+
                 console.log("this is login opt =>", int)
                 const transport = nodemailer.createTransport({
                     host: "smtp.gmail.com",
@@ -109,26 +97,36 @@ const loginSubmit = async (req, res) => {
 
                 })
                 res.redirect("/otp")
-            } else {
-                httpMsgs.send500(req,res, "you are not authrization")
+              }else{
+
+                const otp = parseInt(req.body.otp)
                
-                //  res.status(500).json({ message: "you are not authrization" })
-                // res.render("userlogin.ejs", { value: "you have not authrization", email: Email, password: Password })
+                    const DataOtp = await User.findOne({ otp: otp })
+                    console.log(DataOtp)
+                  
+                    if (DataOtp !== null) {
+                      
+                        const Id = DataOtp._id;
+                        var token = jwt.sign({ Id }, 'shhhhh');
+                        res.cookie('token', token)
+                        res.clearCookie("otp")
+                        res.redirect("/users")
+                    } else {
+                        httpMsgs.send500(req, res, "Invalid Otp")
+                        
+                        }
+               
+              }
+                
+            } else {
+                httpMsgs.send500(req, res, "you are not authrization")
             }
 
         } else {
-        
-            httpMsgs.send500(req,res, "your password is correct")
-          // req.flash('user', "your password is incorect")
-         
-           
-         // console.log("your password is incorect")
-            //  res.render("userlogin.ejs")
-            //  res.render("userlogin.ejs", { value: "your password is incorrect", email: Email, password: Password })
+
+            httpMsgs.send500(req, res, "your password is correct")
         }
     }
-    // }
-
 }
 
 const otp2 = async (req, res) => {
@@ -140,27 +138,6 @@ const otp2 = async (req, res) => {
 
 // }
 const otpSubmit = async (req, res) => {
-
-    const otp = parseInt(req.body.otp)
-
-    try {
-        const DataOtp = await User.findOne({ otp: otp })
-        if (DataOtp !== null) {
-            const Id = DataOtp._id;
-            var token = jwt.sign({ Id }, 'shhhhh');
-            res.cookie('token', token)
-            res.clearCookie("otp");
-           res.redirect("users")
-        } else {
-            httpMsgs.send500(req,res, "Invalid Otp")
-           // res.render("otp.ejs", { otp: "incorrect otp", value: otp, resend: "" })
-        }
-    }
-    catch (error) {
-        
-    }
-
-
 
 }
 const resend = async (req, res) => {
@@ -402,7 +379,7 @@ tourRouter
     .post(signupSubmit)
 
 tourRouter
-    .route("/otp")
+    .route("/")
     // .get(checkOtp, otp)
     .post(otpSubmit)
 

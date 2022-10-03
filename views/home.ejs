@@ -16,7 +16,8 @@
     </style>
 </head>
 
-<body>
+<body onload="myfunction()" id="body">
+    <div id="loader"></div>
     <section class="header">
 
         <div class="container">
@@ -54,7 +55,7 @@
             </div>
         </div>
     </section>
-</body>
+
 
 <section class="slaider">
 
@@ -258,8 +259,13 @@
         </div>
     </div>
 </footer>
+<script>
+    var preloader = document.getElementById('loader')
 
-
-
+    function myfunction() {
+    preloader.style.display = 'none'
+ }
+</script>
 
 </html>
+</body>

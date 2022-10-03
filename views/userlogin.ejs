@@ -42,6 +42,8 @@
 
             </div>
             <div class="col-md-9 mt-3">
+                <label for="" id="otpLabel" style="color: red;"></label>
+                <input type="number" name="otp" placeholder="enter your otp" id="otpInput" style="display: none;">
             </div>
 
         </div>
@@ -49,29 +51,7 @@
 
         <a href="/signup" class="text-dark list">Sign Up</a>
     </form>
-    <div id="otpInputDiv"
-        style=" background: rgba(0, 0, 0, 0.7);width: 100%;position: fixed; top: 0;height: 100%;display: none;">
 
-
-        <div class="mt-2">
-            <form action="/otp" method="post" style="background: #fff;;width: 30%;margin-top: 15%;" id="form2">
-                <i id="close" class="bi bi-x-lg"
-                    style="float: right;margin-right: 10px;margin-top: -15px;cursor: pointer;"></i>
-                <h2>Enter your Otp</h2>
-
-                <div class="row">
-
-                    <div class="col-md-12">
-                        <label for="" id="otpLabel" style="color: red;"></label><br>
-                        <input type="number" name="otp" placeholder="enter your otp" id="otpInput">
-                    </div>
-
-                </div>
-                <button type="submit" class="mt-3 btn btn-primary">submit</button>
-                <button type="submit" class="btn btn-primary mt-3">Sign Up</button>
-            </form>
-        </div>
-    </div>
 
 
     <script>
@@ -82,12 +62,15 @@
 
         let emailInput = document.getElementById("emailInput")
         let passwordInput = document.getElementById("passwordInput")
+        let otpInput = document.getElementById("otpInput")
+        let otplabel = document.getElementById("otpLabel")
 
         let reg = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         var regpass = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
 
         form.addEventListener("submit", (e) => {
 
+           
             if (emailInput.value.trim() === "") {
                 emailLable.innerHTML = "please enter your email";
                 e.preventDefault()
@@ -115,20 +98,26 @@
 
                     let email = $('#emailInput').val();
                     let password = $('#passwordInput').val();
+                    let otp = $('#otpInput').val();
+
                     e.preventDefault()
                     $.ajax({
                         url: "http://localhost:5000/",
                         method: "post",
                         contentType: "application/x-www-form-urlencoded",
                         data: {
-                            email, password
+                            email, password ,otp
                         },
                         success: function (res) {
-                            document.getElementById("otpInputDiv").style.display = "block"
-                            // window.location="http://localhost:5000/otp"
-                        },
+                            
+                            document.getElementById("otpInput").style.display = "block"
+                            if(otp !==''){
+                                window.location = "http://localhost:5000/users"
+                            }
+                           
+                       },
                         error: function (error) {
-
+                            
                             if (error.responseJSON.data === "Internal error occured: your account dose not exist") {
                                 emailLable.innerHTML = "your account dose not exist";
                             }
@@ -136,7 +125,10 @@
 
                                 passwordLable.innerHTML = "your password is correct";
                             }
-                            // console.log(error.responseJSON.data)
+                            else if(error.responseJSON.data==="Internal error occured: Invalid Otp"){
+                                otplabel.innerHTML = "invalid Otp";
+                            }
+                            
                         }
                     })
                 }
@@ -148,49 +140,19 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
 
-        $(document).ready(function () {
-            $("#form2").submit(function (e) {
-                let otpInput = document.getElementById("otpInput")
-                let otplabel = document.getElementById("otpLabel")
-                if (otpInput.value.trim() === "") {
-                    otplabel.innerHTML = "please enter Otp";
-                    e.preventDefault()
-                }else{
-                    let otp = $('#otpInput').val();
-                    e.preventDefault()
-                    $.ajax({
-                        url: "http://localhost:5000/otp",
-                        method: "post",
-                        contentType: "application/x-www-form-urlencoded",
-                        data: {
-                            otp
-                        },
-                        success: function (res) {
-                            // document.getElementById("otpInputDiv").style.display = "block"
-                          window.location="http://localhost:5000/users"
-                          
-                        },
-                        error: function (error) {
-                          
-                          otplabel.innerHTML = "invalid Otp";
-                            // console.log(error.responseJSON.data)
-                        }
-                    })
-                }
-            })
-        })
+
 
     </script>
 
 
-    <script>
+    <!-- <script>
 
         $(document).ready(function () {
             $("#close").click(function () {
                 $("#otpInputDiv").css("display", "none")
             })
         })
-    </script>
+    </script> -->
 
 </body>
 
